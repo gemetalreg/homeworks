@@ -10,8 +10,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Подключаем метод POST /send
-	mux.HandleFunc("POST /send", verify.NewHandler())
-	mux.HandleFunc("GET /verify/{hash}", verify.NewHandler())
+	mux.HandleFunc("POST /send", verify.Send())
+	mux.HandleFunc("GET /verify/{hash}", verify.Verify())
 
 	fmt.Println("Сервер запущен на порту :8080")
 	http.ListenAndServe(":8080", mux)

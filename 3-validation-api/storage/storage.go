@@ -29,5 +29,10 @@ func Load() []configs.Config {
 	fileData, _ := os.ReadFile("data.json")
 	json.Unmarshal(fileData, &loadedList)
 	return loadedList
+}
 
+func Add(c configs.Config) {
+	loadedList := Load()
+	loadedList = append(loadedList, c)
+	Save(loadedList)
 }
