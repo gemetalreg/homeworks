@@ -3,6 +3,7 @@ package verify
 import (
 	"crypto/sha256"
 	"email/api/dto"
+	"email/api/res"
 	"email/api/storage"
 	"encoding/hex"
 	"encoding/json"
@@ -53,11 +54,14 @@ func Send() http.HandlerFunc {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		e := email.NewEmail()
 		e.From = "Jordan Wright <test@gmail.com>"
-		e.To = []string{"test@example.com"}
+		e.To = []string{sendDto.Email}
 		e.Subject = "Awesome Subject"
-		e.HTML = []byte(fmt.Sprintf("<h1>Fancy HTML is supported, too!</h1><a href='http://localhost:8081/verify/{%s}'>verification link</a>", hash))
-		e.Send("smtp.gmail.com:587", smtp.PlainAuth("", "test@gmail.com", "password123", "smtp.gmail.com"))
-
+		e.HTML = []byte(fmt.Sprintf("<h1>Fancy HTML is supported, too!</h1><a href='http://localhost:8081/verify/%s'>verification link</a>", hash))
+		err = e.Send("smtp.gmail.com:587", smtp.PlainAuth("", "test@gmail.com", "password123", "smtp.gmail.com"))
+		if err != nil {
+			res.TextAns(w, "Failed to send email")
+			return
+		}
 	}
 }
 
@@ -65,12 +69,8 @@ func Verify() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hash := r.PathValue("hash")
 		verifyDto := storage.Load()
-		if hash != verifyDto.Hash {
-			fmt.Println(false)
-		} else {
-			fmt.Println(true)
-		}
+		result := hash == verifyDto.Hash
 		storage.Clear()
-
+		res.TextAns(w, result)
 	}
 }
