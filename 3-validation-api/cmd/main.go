@@ -13,7 +13,7 @@ func main() {
 	mux.HandleFunc("POST /send", verify.Send())
 	mux.HandleFunc("GET /verify/{hash}", verify.Verify())
 
-	fmt.Println("Сервер запущен на порту :8080")
-	http.ListenAndServe(":8080", mux)
+	fmt.Println("Сервер запущен на порту :8081")
+	http.ListenAndServe(":8081", mux)
 
 }

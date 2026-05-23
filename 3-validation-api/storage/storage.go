@@ -1,13 +1,13 @@
 package storage
 
 import (
-	"email/api/configs"
+	"email/api/dto"
 	"encoding/json"
 	"fmt"
 	"os"
 )
 
-func Save(data []configs.Config) {
+func Save(data dto.VerifyDto) {
 	fileData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		fmt.Println("Ошибка сериализации:", err)
@@ -21,18 +21,19 @@ func Save(data []configs.Config) {
 		return
 	}
 
-	fmt.Println("Список успешно сохранен в data.json!")
+	fmt.Println("email и hash успешно сохранены в data.json!")
 }
 
-func Load() []configs.Config {
-	var loadedList []configs.Config
+func Load() dto.VerifyDto {
+	var loaded dto.VerifyDto
 	fileData, _ := os.ReadFile("data.json")
-	json.Unmarshal(fileData, &loadedList)
-	return loadedList
+	json.Unmarshal(fileData, &loaded)
+	return loaded
 }
 
-func Add(c configs.Config) {
-	loadedList := Load()
-	loadedList = append(loadedList, c)
-	Save(loadedList)
+func Clear() {
+	err := os.Truncate("data.json", 0)
+	if err != nil {
+		panic(err)
+	}
 }
